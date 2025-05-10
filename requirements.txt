@@ -1,0 +1,23 @@
+# Librerías base
+networkx==3.1        # Para grafos y algoritmos
+matplotlib==3.7.1    # Visualización de grafos
+iperf3==0.1.11       # Mediciones de ancho de banda
+speedtest-cli==2.1.3 # Alternativa para pruebas de red
+cryptography==41.0.3 # Encriptación (opcional)
+
+# VPN (elige una)
+wireguard==0.1.5     # Configuración de VPN (requiere permisos admin)
+tailscale==0.1.0     # Alternativa más sencilla (opcional)
+
+# GUI moderna (elige una opción)
+## Opción 1: PyQt6 (profesional)
+PyQt6==6.5.2
+PyQt6-Qt6==6.5.2
+pyqtgraph==0.13.3    # Para visualización interactiva de grafos
+
+## Opción 2: CustomTkinter (moderna y simple)
+customtkinter==5.2.1
+
+# Automatización (opcional)
+schedule==1.2.0      # Para actualización periódica de métricas
+python-crontab==3.0.0 # Manejo de cron (Linux)
