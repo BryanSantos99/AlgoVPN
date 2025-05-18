@@ -21,6 +21,7 @@ import servidor
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from PyQt5.QtCore import QTimer
 from enviar import FileSenderFrame
+import recibir
 
 class AlgoVPNApp:
     def __init__(self, root):
@@ -49,8 +50,8 @@ class AlgoVPNApp:
         self.server_process = None
         self.graph_canvas = None
         self.bandwidth_timer = None
-        self.start_http_server()
-        self.run_bandwidth_test()
+        
+        
 
     def setup_ui(self):
         # Main container with scrollbar
@@ -193,6 +194,10 @@ class AlgoVPNApp:
         self.file_sender = FileSenderFrame(main_frame, self, padding="10")
         self.file_sender.pack(fill=tk.X, pady=10)
             # Conectar señales si es necesario
+        
+        # Añadir el frame de recepción de archivos
+        self.file_receiver = recibir.FileReceiverWidget(main_frame,port=8080)
+        self.file_receiver.pack(fill=tk.X, pady=10)
        
         # Configurar estilo
         style = ttk.Style()
