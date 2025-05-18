@@ -3,7 +3,7 @@ import os
 import random
 import sys
 
-PORT = 8000
+
 TEST_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "..", "archivos_prueba")
 TEST_FILE = "10MB.bin"
 
@@ -21,8 +21,8 @@ def create_test_file():
 
 if __name__ == "__main__":
     create_test_file()
-    server = HTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"Servidor iniciado en http://localhost:{PORT}")
+    server = HTTPServer(("0.0.0.0", 8000), Handler)
+    print(f"Servidor iniciado en http://localhost:{8000}")
     print(f"Sirviendo archivos desde: {TEST_DIR}")
     try:
         server.serve_forever()
