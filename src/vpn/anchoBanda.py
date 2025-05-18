@@ -20,13 +20,17 @@ def measure_bandwidth(url, size_mb):
         return 0.0
 
 if __name__ == "__main__":
-    NODES = ["25.59.177.33", "25.59.176.106"]  # Actualiza con tus IPs
+    NODES = ["25.59.177.33","25.8.106.97"]  # Actualiza con tus IPs
     TEST_FILE = "10MB.bin"
-    PORT = 8000
+    PORT = 8080
     results = {}
     
     for ip in NODES:
         speed = measure_bandwidth(f"http://{ip}:{PORT}/{TEST_FILE}", 10)
+        if speed == 0.0:
+            print(f"Error al medir el ancho de banda con {ip} de tlajomulco")
+            print("No se pudo medir el ancho de banda")
+            continue
         results[ip] = speed
         print(f"Ancho de banda con {ip}: {speed:.2f} Mbps")
 
