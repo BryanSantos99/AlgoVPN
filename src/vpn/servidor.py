@@ -21,8 +21,8 @@ def create_test_file():
 
 if __name__ == "__main__":
     create_test_file()
-    server = HTTPServer(("0.0.0.0", 8000), Handler)
-    print(f"Servidor iniciado en http://localhost:{8000}")
+    server = HTTPServer(("0.0.0.0", 8080), Handler)
+    print(f"Servidor iniciado en http://localhost:{8080}")
     print(f"Sirviendo archivos desde: {TEST_DIR}")
     try:
         server.serve_forever()

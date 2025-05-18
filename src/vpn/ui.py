@@ -67,8 +67,8 @@ class AlgoVPNApp:
         """Inicia el servidor HTTP en un hilo separado"""
         def run_server():
             servidor.create_test_file()
-            self.server = HTTPServer(("0.0.0.0", 8000), servidor.Handler)
-            self.log(f"Servidor HTTP iniciado en http://localhost:{8000}")
+            self.server = HTTPServer(("0.0.0.0", 8080), servidor.Handler)
+            self.log(f"Servidor HTTP iniciado en http://localhost:{8080}")
             self.log(f"Sirviendo archivos desde: {self.TEST_DIR}")
             self.server.serve_forever()
         
@@ -269,7 +269,6 @@ class AlgoVPNApp:
             return
             
         timestamp = datetime.now().strftime("%H:%M:%S")
-        self.results_text.insert(tk.END, f"[{timestamp}] {message}\n")
         self.results_text.see(tk.END)
         self.root.update_idletasks()
     def display_graph(self):
@@ -341,27 +340,7 @@ class AlgoVPNApp:
             self.display_graph()
         else:
             messagebox.showwarning("Advertencia", "Primero ejecute las pruebas para generar el gráfico")
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("1000x800")
-    
-    # Centrar ventana
-    root.update_idletasks()
-    width = root.winfo_width()
-    height = root.winfo_height()
-    x = (root.winfo_screenwidth() // 2) - (width // 2)
-    y = (root.winfo_screenheight() // 2) - (height // 2)
-    root.geometry(f"{width}x{height}+{x}+{y}")
-    
-    app = AlgoVPNApp(root)
-    
-    def on_closing():
-        if messagebox.askokcancel("Salir", "¿Está seguro que desea salir?"):
-            app.stop_server()
-            root.quit()
-    
-    
+       
 if __name__ == "__main__":
         root = tk.Tk()
         root.geometry("1000x800")
