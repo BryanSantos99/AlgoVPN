@@ -40,7 +40,27 @@ class AlgoVPNApp:
         # Variables de control
         self.server_process = None
         self.graph_canvas = None
+        self.start_http_server()
+    
+    def start_http_server(self):
+        """Inicia el servidor HTTP en un hilo separado"""
+        def run_server():
+            servidor.create_test_file()
+            self.server = HTTPServer(("0.0.0.0", self.PORT), servidor.Handler)
+            self.log(f"Servidor HTTP iniciado en http://localhost:{self.PORT}")
+            self.log(f"Sirviendo archivos desde: {self.TEST_DIR}")
+            self.server.serve_forever()
         
+        self.server_thread = threading.Thread(target=run_server, daemon=True)
+        self.server_thread.start()
+   
+    def on_closing(self):
+        """Maneja el evento de cierre de la ventana"""
+        if messagebox.askokcancel("Salir", "¿Está seguro que desea salir?"):
+            self.stop_http_server()
+            self.stop_server()  # Detener cualquier otro proceso
+            self.root.quit()
+                
     def setup_ui(self):
         # Frame principal
         main_frame = ttk.Frame(self.root, padding="10")
