@@ -66,7 +66,7 @@ class FileSenderFrame(ttk.LabelFrame):
             # Configuración del socket (TCP)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(15)  # Hamachi puede tener latencia
-                s.connect((ip_destino, 55555))  # Puerto fijo para Hamachi
+                s.connect((ip_destino, 8080))  # Puerto fijo para Hamachi
 
                 # Enviar metadata (nombre y tamaño)
                 filename = os.path.basename(self.selected_file)

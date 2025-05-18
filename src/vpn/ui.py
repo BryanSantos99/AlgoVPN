@@ -128,8 +128,7 @@ class AlgoVPNApp:
     def on_closing(self):
         """Maneja el evento de cierre de la ventana"""
         if messagebox.askokcancel("Salir", "¿Está seguro que desea salir?"):
-            self.stop_http_server()
-            self.stop_server()  
+             
             # Detener cualquier otro proceso
             self.root.quit()
                 
