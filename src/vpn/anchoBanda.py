@@ -20,7 +20,7 @@ def measure_bandwidth(url, size_mb):
         return 0.0
 
 if __name__ == "__main__":
-    NODES = ["25.59.177.33","25.8.106.97"]  # Actualiza con tus IPs
+    NODES = ["25.59.177.33","25.8.106.97","25.2.176.178"]  # Actualiza con tus IPs
     TEST_FILE = "10MB.bin"
     PORT = 8080
     results = {}
