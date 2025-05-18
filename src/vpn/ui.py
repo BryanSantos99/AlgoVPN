@@ -7,6 +7,7 @@ import random
 import json
 import time
 import sys
+import queue
 import networkx as nx
 import matplotlib
 matplotlib.use('Agg')
@@ -18,9 +19,11 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 class AlgoVPNApp:
     def __init__(self, root):
+        self.log_queue = queue.Queue()
+        root.after(100, self.process_log_queue)
         self.root = root
         self.root.title("AlgoVPN - Monitor de Red")
-        
+        self.TEST_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "..", "archivos_prueba")
         # Configurar rutas según tu estructura de proyecto
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # src/vpn/
         self.server_path = os.path.join(self.base_dir, "vpn", "servidor.py")
@@ -42,18 +45,42 @@ class AlgoVPNApp:
         self.graph_canvas = None
         self.start_http_server()
     
+    def process_log_queue(self):
+        """Procesa los mensajes en cola desde el hilo principal"""
+        while not self.log_queue.empty():
+            try:
+                message = self.log_queue.get_nowait()
+                self._safe_log(message)
+            except queue.Empty:
+                break
+        self.root.after(100, self.process_log_queue)  # Programar el próximo chequeo
+    
+    def _safe_log(self, message):
+        """Método seguro para logging desde el hilo principal"""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        self.results_text.insert(tk.END, f"[{timestamp}] {message}\n")
+        self.results_text.see(tk.END)
+        self.root.update_idletasks()
+
+        
     def start_http_server(self):
         """Inicia el servidor HTTP en un hilo separado"""
         def run_server():
             servidor.create_test_file()
-            self.server = HTTPServer(("0.0.0.0", self.PORT), servidor.Handler)
-            self.log(f"Servidor HTTP iniciado en http://localhost:{self.PORT}")
+            self.server = HTTPServer(("0.0.0.0", 8000), servidor.Handler)
+            self.log(f"Servidor HTTP iniciado en http://localhost:{8000}")
             self.log(f"Sirviendo archivos desde: {self.TEST_DIR}")
             self.server.serve_forever()
         
         self.server_thread = threading.Thread(target=run_server, daemon=True)
         self.server_thread.start()
-   
+        
+    def stop_http_server(self):
+        """Detiene el servidor HTTP"""
+        if self.server:
+            self.server.shutdown()
+            self.server.server_close()
+            self.log("Servidor HTTP detenido")
     def on_closing(self):
         """Maneja el evento de cierre de la ventana"""
         if messagebox.askokcancel("Salir", "¿Está seguro que desea salir?"):
@@ -121,8 +148,11 @@ class AlgoVPNApp:
         # Configurar estilo
         style = ttk.Style()
         style.configure('TButton', font=('Arial', 10, 'bold'))
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
     
     def log(self, message):
+        """Agrega un mensaje a la cola para ser procesado por el hilo principal"""
+        self.log_queue.put(message)
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.results_text.insert(tk.END, f"[{timestamp}] {message}\n")
         self.results_text.see(tk.END)
@@ -233,7 +263,15 @@ class AlgoVPNApp:
             self.log("Gráfico generado exitosamente")
         except Exception as e:
             raise Exception(f"Error al generar gráfico: {str(e)}")
-    
+    def _safe_log(self, message):
+        """Método seguro para logging desde el hilo principal"""
+        if not self.root.winfo_exists():  # Verificar si la ventana aún existe
+            return
+            
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        self.results_text.insert(tk.END, f"[{timestamp}] {message}\n")
+        self.results_text.see(tk.END)
+        self.root.update_idletasks()
     def display_graph(self):
         if os.path.exists(self.graph_output):
             if self.graph_label:
@@ -282,10 +320,6 @@ class AlgoVPNApp:
     
     def _run_bandwidth_test(self):
         try:
-            self.log("Iniciando servidor HTTP...")
-            self.start_server()
-            time.sleep(2)
-            
             self.log("\nEjecutando prueba de ancho de banda...")
             result = subprocess.run(
                 ["python", self.bandwidth_path],
@@ -301,8 +335,6 @@ class AlgoVPNApp:
             self.log("Prueba de ancho de banda completada")
         except Exception as e:
             self.log(f"Error: {str(e)}")
-        finally:
-            self.stop_server()
     
     def show_graph(self):
         if os.path.exists(self.graph_output):
@@ -330,16 +362,17 @@ if __name__ == "__main__":
             root.quit()
     
     
-    root.mainloop()
-    PORT = 8000
-    TEST_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "..", "archivos_prueba")
-    TEST_FILE = "10MB.bin"
-    servidor.create_test_file()
-    server = HTTPServer(("0.0.0.0", PORT), servidor.Handler)
-    print(f"Servidor iniciado en http://localhost:{PORT}")
-    print(f"Sirviendo archivos desde: {TEST_DIR}")
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nServidor detenido")
-    root.protocol("WM_DELETE_WINDOW", on_closing)
+if __name__ == "__main__":
+        root = tk.Tk()
+        root.geometry("1000x800")
+        
+        # Centrar ventana
+        root.update_idletasks()
+        width = root.winfo_width()
+        height = root.winfo_height()
+        x = (root.winfo_screenwidth() // 2) - (width // 2)
+        y = (root.winfo_screenheight() // 2) - (height // 2)
+        root.geometry(f"{width}x{height}+{x}+{y}")
+        
+        app = AlgoVPNApp(root)
+        root.mainloop()
