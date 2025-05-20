@@ -369,7 +369,7 @@ if __name__ == "__main__":
     root.geometry("900x700")
     
     # Nodos de ejemplo
-    test_nodes = ["25.59.177.33", "25.8.106.97", "25.2.176.178"]
+    test_nodes = ["25.59.177.33", "25.8.106.97", "25.56.132.192"]
     
     widget = NetworkTestWidget(
         root,
