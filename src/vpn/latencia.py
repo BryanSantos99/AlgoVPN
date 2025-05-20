@@ -19,11 +19,15 @@ def measure_latency(ip):
         return float('inf')
 
 if __name__ == "__main__":
-    NODES = ["25.59.177.33", "25.8.106.97"]  # Actualiza con tus IPs
+    NODES = ["25.59.177.33", "25.8.106.97","25.56.132.192"]  # Actualiza con tus IPs
     results = {}
     
     for ip in NODES:
         latency = measure_latency(ip)
+        if latency >50:
+            print(f"Esta {ip} es de tlajomulco por que tiene {latency:.2f} ms")
+            results[ip] = latency
+            continue
         results[ip] = latency
         print(f"Latencia con {ip}: {latency:.2f} ms")
 
