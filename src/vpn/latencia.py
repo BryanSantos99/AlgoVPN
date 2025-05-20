@@ -19,7 +19,7 @@ def measure_latency(ip):
         return float('inf')
 
 if __name__ == "__main__":
-    NODES = ["25.59.177.33", "25.8.106.97","25.2.176.178"]  # Actualiza con tus IPs
+    NODES = ["25.59.177.33", "25.8.106.97","25.56.132.192"]  # Actualiza con tus IPs
     results = {}
     
     for ip in NODES:
